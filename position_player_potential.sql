@@ -1,4 +1,4 @@
-SELECT p.Id,
+SELECT P.Id,
        P.FirstName || ' ' || P.LastName                                    AS PlayerName,
        S.Number                                                            AS SeasonNumber,
        PSBS.HomeRuns,
@@ -14,8 +14,8 @@ SELECT p.Id,
        (PSGS.Contact + PSGS.Power + PSGS.Speed + PSGS.Fielding + PSGS.Arm) AS TotalWeighted,
        PSGS.*
 FROM PlayerSeasonBattingStats PSBS
-         JOIN PlayerSeasons PS on PS.Id = PSBS.PlayerSeasonId
-         JOIN main.Players P on P.Id = PS.PlayerId
+         JOIN PlayerSeasons PS ON PS.Id = PSBS.PlayerSeasonId
+         JOIN main.Players P ON P.Id = PS.PlayerId
          JOIN main.Seasons S ON PS.SeasonId = S.Id
          JOIN PlayerSeasonGameStats PSGS ON PS.Id = PSGS.PlayerSeasonId
 WHERE PSBS.IsRegularSeason = 1

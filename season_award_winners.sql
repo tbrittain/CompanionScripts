@@ -13,12 +13,12 @@ SELECT P.FirstName || ' ' || P.LastName AS PlayerName,
        PSPS.StrikeoutsPerNine,
        PSPS.EraMinus
 FROM PlayerSeasons PS
-         JOIN main.Players P on PS.PlayerId = P.Id
-         JOIN main.PlayerAwardPlayerSeason PAPS on PS.Id = PAPS.PlayerSeasonsId
-         JOIN main.PlayerAwards PA on PAPS.AwardsId = PA.Id
-         JOIN PlayerSeasonBattingStats PSBS on PS.Id = PSBS.PlayerSeasonId
-         LEFT JOIN PlayerSeasonPitchingStats PSPS on PS.Id = PSPS.PlayerSeasonId
-         JOIN main.Seasons S on PS.SeasonId = S.Id
+         JOIN main.Players P ON PS.PlayerId = P.Id
+         JOIN main.PlayerAwardPlayerSeason PAPS ON PS.Id = PAPS.PlayerSeasonsId
+         JOIN main.PlayerAwards PA ON PAPS.AwardsId = PA.Id
+         JOIN PlayerSeasonBattingStats PSBS ON PS.Id = PSBS.PlayerSeasonId
+         LEFT JOIN PlayerSeasonPitchingStats PSPS ON PS.Id = PSPS.PlayerSeasonId
+         JOIN main.Seasons S ON PS.SeasonId = S.Id
 WHERE PA.OriginalName = 'MVP'
   AND PSBS.IsRegularSeason = 1
   AND (PSPS.IsRegularSeason = 1 OR PSPS.IsRegularSeason IS NULL)

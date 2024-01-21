@@ -9,7 +9,7 @@ SELECT OpsPlusRange,
        AVG(Power)   AS Power,
        AVG(Contact) AS Contact,
        AVG(Speed)   AS Speed,
-       COUNT(*) AS Count
+       COUNT(*) AS COUNT
 FROM (SELECT CASE
     WHEN PSBS.OpsPlus BETWEEN 0 AND 90 THEN '0-90'
     WHEN PSBS.OpsPlus BETWEEN 90 AND 100 THEN '90-100'

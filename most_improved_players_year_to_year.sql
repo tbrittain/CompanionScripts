@@ -4,7 +4,7 @@ WITH PlayerStats AS (SELECT PSGS.PlayerSeasonId,
                             COALESCE(PSGS.Velocity, 0) +
                             COALESCE(PSGS.Junk, 0) + COALESCE(PSGS.Accuracy, 0) AS TotalStats
                      FROM PlayerSeasonGameStats PSGS
-                              JOIN main.PlayerSeasons PS on PS.Id = PSGS.PlayerSeasonId),
+                              JOIN main.PlayerSeasons PS ON PS.Id = PSGS.PlayerSeasonId),
      SeasonStats AS (SELECT P.FirstName || ' ' || P.LastName AS PlayerName,
                             S.Number                         AS SeasonNumber,
                             PlayerStats.TotalStats,

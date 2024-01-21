@@ -1,12 +1,12 @@
-SELECT P.FirstName || ' ' || P.LastName            AS PlayerName,
-       S.Number                                    AS SeasonNumber,
+SELECT P.FirstName || ' ' || P.LastName                   AS PlayerName,
+       S.Number                                           AS SeasonNumber,
        PSPS.Wins,
        PSPS.Losses,
        PSPS.WinPercentage,
        PSPS.EarnedRunAverage,
        PSPS.EraMinus,
-       TNH.Name                                    AS TeamName,
-       STH.Wins                                    AS TeamWins,
+       TNH.Name                                           AS TeamName,
+       STH.Wins                                           AS TeamWins,
        PSPS.Wins * (1 / CAST(STH.WinPercentage AS FLOAT)) AS WeightedWinsPerTeamLoss
 FROM PlayerSeasonPitchingStats PSPS
          JOIN main.PlayerSeasons PS ON PS.Id = PSPS.PlayerSeasonId

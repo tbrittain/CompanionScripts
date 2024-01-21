@@ -1,16 +1,16 @@
-SELECT p.Id,
+SELECT P.Id,
        P.FirstName || ' ' || P.LastName AS PlayerName,
        S.Number                         AS SeasonNumber,
        PSBS.HomeRuns,
        PSBS.StolenBases,
-       psgs.Power,
-       psgs.Contact,
-       psgs.Speed
+       PSGS.Power,
+       PSGS.Contact,
+       PSGS.Speed
 FROM PlayerSeasonBattingStats PSBS
-         JOIN main.PlayerSeasons PS on PS.Id = PSBS.PlayerSeasonId
-         JOIN main.Players P on PS.PlayerId = P.Id
-         JOIN Seasons S on PS.SeasonId = S.Id
-         join main.PlayerSeasonGameStats PSGS on PS.Id = PSGS.PlayerSeasonId
+         JOIN main.PlayerSeasons PS ON PS.Id = PSBS.PlayerSeasonId
+         JOIN main.Players P ON PS.PlayerId = P.Id
+         JOIN Seasons S ON PS.SeasonId = S.Id
+         JOIN main.PlayerSeasonGameStats PSGS ON PS.Id = PSGS.PlayerSeasonId
 WHERE PSBS.IsRegularSeason = 1
   AND PSBS.HomeRuns >= 30
   AND PSBS.StolenBases >= 30
