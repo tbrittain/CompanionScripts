@@ -22,12 +22,57 @@ WITH TeamHistories AS (SELECT *
                                       MAX(T."From") AS "From",
                                       MAX(T."To")   AS "To"
                                FROM Transactions T
-                               GROUP BY T.PlayerSeasonId)
-
-SELECT FT."From" AS FromTeam,
-       FT."To"   AS ToTeam,
-       COUNT(*)  AS NumTransactions
-FROM FlattenedTransactions FT
-GROUP BY FT."From",
-         FT."To"
-ORDER BY NumTransactions DESC
+                               GROUP BY T.PlayerSeasonId),
+     FinalInSeasonTransactions AS (SELECT FT."From" AS FromTeam,
+                                          FT."To"   AS ToTeam,
+                                          COUNT(*)  AS NumTransactions
+                                   FROM FlattenedTransactions FT
+                                   GROUP BY FT."From",
+                                            FT."To"),
+     InterSeasonPlayerHistory AS (SELECT P.Id,
+                                         P.FirstName || ' ' || P.LastName AS PlayerName,
+                                         PS.Id                            AS PlayerSeasonId,
+                                         PS.SeasonId,
+                                         TH.Id,
+                                         TH."Order",
+                                         T.Id,
+                                         TNH.Name
+                                  FROM TeamHistories TH
+                                           JOIN SeasonTeamHistory STH ON TH.SeasonTeamHistoryId = STH.Id
+                                           JOIN Teams T ON STH.TeamId = T.Id
+                                           JOIN TeamNameHistory TNH ON STH.TeamNameHistoryId = TNH.Id
+                                           JOIN PlayerSeasons PS ON TH.PlayerSeasonId = PS.Id
+                                           JOIN Players P ON PS.PlayerId = P.Id),
+     InterSeasonTransactions AS (SELECT IST.*,
+                                        LAG(IST.Name) OVER (PARTITION BY IST.PlayerName ORDER BY IST.SeasonId) AS FromTeam,
+                                        IST.Name                                                               AS ToTeam
+                                 FROM InterSeasonPlayerHistory IST),
+     FlattenedInterSeasonTransactions AS (SELECT IST.PlayerSeasonId,
+                                                 IST.FromTeam,
+                                                 IST.ToTeam
+                                          FROM InterSeasonTransactions IST
+                                          WHERE IST.FromTeam != IST.ToTeam
+                                            AND IST.FromTeam IS NOT NULL
+                                            AND IST.ToTeam IS NOT NULL),
+     FinalInterSeasonTransactions AS (SELECT FIT.FromTeam,
+                                             FIT.ToTeam,
+                                             COUNT(*) AS NumTransactions
+                                      FROM FlattenedInterSeasonTransactions FIT
+                                      GROUP BY FIT.FromTeam,
+                                               FIT.ToTeam)
+SELECT FIST.FromTeam,
+       FIST.ToTeam,
+       FIST.NumTransactions + COALESCE(FIST2.NumTransactions, 0) AS NumTransactions
+FROM FinalInSeasonTransactions FIST
+         LEFT JOIN FinalInterSeasonTransactions FIST2 ON FIST.FromTeam = FIST2.FromTeam
+    AND FIST.ToTeam = FIST2.ToTeam
+UNION
+SELECT FIST2.FromTeam,
+       FIST2.ToTeam,
+       FIST2.NumTransactions
+FROM FinalInterSeasonTransactions FIST2
+         LEFT JOIN FinalInSeasonTransactions FIST ON FIST.FromTeam = FIST2.FromTeam
+    AND FIST.ToTeam = FIST2.ToTeam
+WHERE FIST.FromTeam IS NULL
+  AND FIST.ToTeam IS NULL
+ORDER BY NumTransactions DESC;
