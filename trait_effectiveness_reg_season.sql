@@ -13,10 +13,14 @@ WITH SeasonsWithTrait AS (SELECT *
                                                           JOIN main.Traits T ON PST.TraitsId = T.Id
                                                  WHERE T.Name = 'Ace Exterminator')
                                AND PSBS.AtBats > 50)
-SELECT 'With Trait' AS Type, AVG(SeasonsWithTrait.OpsPlus) AS OpsPlus, COUNT(SeasonsWithTrait.PlayerSeasonId) AS Num
+SELECT 'With Trait'                           AS Type,
+       AVG(SeasonsWithTrait.OpsPlus)          AS AvgOpsPlus,
+       COUNT(SeasonsWithTrait.PlayerSeasonId) AS NumSeasons,
+       AVG(SeasonsWithTrait.AtBats)           AS AvgAtBats
 FROM SeasonsWithTrait
 UNION ALL
 SELECT 'Without Trait'                           AS Type,
-       AVG(SeasonsWithoutTrait.OpsPlus)          AS OpsPlus,
-       COUNT(SeasonsWithoutTrait.PlayerSeasonId) AS Num
+       AVG(SeasonsWithoutTrait.OpsPlus)          AS AvgOpsPlus,
+       COUNT(SeasonsWithoutTrait.PlayerSeasonId) AS NumSeasons,
+       AVG(SeasonsWithoutTrait.AtBats)           AS AvgAtBats
 FROM SeasonsWithoutTrait;
